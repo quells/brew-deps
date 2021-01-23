@@ -96,14 +96,33 @@ func readFormulae(filename string) (formulae []Formula, err error) {
 }
 
 func getInstalledPkgs() (installed []string, err error) {
-	cmd := exec.Command("brew", "list")
+	cmd := exec.Command("brew", "list", "--formula")
+
 	var stdout io.ReadCloser
 	stdout, err = cmd.StdoutPipe()
+	defer stdout.Close()
+	if err != nil {
+		return
+	}
+
+	var stderr io.ReadCloser
+	stderr, err = cmd.StderrPipe()
+	defer stderr.Close()
 	if err != nil {
 		return
 	}
 
 	if err = cmd.Start(); err != nil {
+		return
+	}
+
+	var errResp []byte
+	errResp, err = ioutil.ReadAll(stderr)
+	if err != nil {
+		return
+	}
+	if len(errResp) != 0 {
+		err = fmt.Errorf(string(errResp))
 		return
 	}
 
