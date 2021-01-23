@@ -96,7 +96,8 @@ func readFormulae(filename string) (formulae []Formula, err error) {
 }
 
 func getInstalledPkgs() (installed []string, err error) {
-	cmd := exec.Command("brew", "list")
+	cmd := exec.Command("brew", "list", "--formula")
+
 	var stdout io.ReadCloser
 	stdout, err = cmd.StdoutPipe()
 	if err != nil {
