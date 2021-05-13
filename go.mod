@@ -1,4 +1,4 @@
-module brew-deps
+module github.com/quells/brew-deps
 
 go 1.13
 
